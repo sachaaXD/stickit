@@ -1,42 +1,87 @@
 <?php
 header('Content-Type: application/json');
+
 require '../config/db.php';
+require '../config/auth.php';
 
+// ambil user dari token
+$user = get_user_from_token($conn);
+$user_id = (int)$user['id'];
+
+
+// ambil JSON body
 $data = json_decode(file_get_contents('php://input'), true);
+
 if (!is_array($data)) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid JSON'
+    ]);
+
     exit;
 }
 
-$user_id    = isset($data['user_id']) ? intval($data['user_id']) : 0;
-$sticker_id = isset($data['sticker_id']) ? intval($data['sticker_id']) : 0;
+$sticker_id = (int)($data['sticker_id'] ?? 0);
 
-if ($user_id <= 0 || $sticker_id <= 0) {
-    echo json_encode(['status' => 'error', 'message' => 'user_id and sticker_id required']);
+if ($sticker_id <= 0) {
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'sticker_id required'
+    ]);
+
     exit;
 }
 
-// cek favorit
-$check = $conn->prepare("SELECT id FROM favorites WHERE user_id = ? AND sticker_id = ?");
+
+// cek sudah ada atau belum
+$check = $conn->prepare("
+    SELECT id 
+    FROM favorites 
+    WHERE user_id = ? AND sticker_id = ?
+");
+
 $check->bind_param("ii", $user_id, $sticker_id);
 $check->execute();
-$res = $check->get_result();
+$check->store_result();
 
-if ($res->num_rows > 0) {
+if ($check->num_rows > 0) {
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Already in favorites'
+    ]);
+
     $check->close();
     $conn->close();
-    echo json_encode(['status' => 'error', 'message' => 'Sticker already in favorites']);
     exit;
 }
+
 $check->close();
 
-$stmt = $conn->prepare("INSERT INTO favorites (user_id, sticker_id) VALUES (?, ?)");
+
+// insert
+$stmt = $conn->prepare("
+    INSERT INTO favorites (user_id, sticker_id)
+    VALUES (?, ?)
+");
+
 $stmt->bind_param("ii", $user_id, $sticker_id);
 
 if ($stmt->execute()) {
-    echo json_encode(['status' => 'success', 'message' => 'Sticker added to favorites']);
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Added to favorites'
+    ]);
+
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Failed to add favorite']);
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Insert failed'
+    ]);
 }
 
 $stmt->close();

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 12, 2026 at 06:59 AM
+-- Generation Time: Feb 20, 2026 at 08:52 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -152,6 +152,28 @@ INSERT INTO `stickers` (`id`, `name`, `image`, `price`, `category_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `upload`
+--
+
+CREATE TABLE `upload` (
+  `id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `image_url` varchar(255) NOT NULL,
+  `category` varchar(50) DEFAULT NULL,
+  `uploaded_by` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `upload`
+--
+
+INSERT INTO `upload` (`id`, `name`, `image_url`, `category`, `uploaded_by`, `created_at`) VALUES
+(1, 'cat gemoy', 'uploads/stickers/1771412981_download3.jpg', 'animal', 'admin', '2026-02-18 11:09:41');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -159,17 +181,18 @@ CREATE TABLE `users` (
   `id` int NOT NULL,
   `name` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` varchar(20) NOT NULL DEFAULT '''user'''
+  `role` varchar(20) NOT NULL DEFAULT '''user''',
+  `token` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `password`, `role`) VALUES
-(1, 'Asha', '$2y$10$abcdefghijklmnopqrstuv', 'admin'),
-(2, 'Bella', '$2y$10$abcdefghijklmnopqrstuv', 'user'),
-(3, 'Raisyah', '$2y$10$abcdefghijklmnopqrstuv', 'user');
+INSERT INTO `users` (`id`, `name`, `password`, `role`, `token`) VALUES
+(1, 'Asha', '$2y$10$abcdefghijklmnopqrstuv', 'admin', NULL),
+(2, 'Bella', '$2y$10$abcdefghijklmnopqrstuv', 'user', NULL),
+(3, 'Raisyah', '$2y$10$abcdefghijklmnopqrstuv', 'user', NULL);
 
 --
 -- Indexes for dumped tables
@@ -211,6 +234,12 @@ ALTER TABLE `order_items`
 -- Indexes for table `stickers`
 --
 ALTER TABLE `stickers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `upload`
+--
+ALTER TABLE `upload`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -258,6 +287,12 @@ ALTER TABLE `order_items`
 --
 ALTER TABLE `stickers`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `upload`
+--
+ALTER TABLE `upload`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`

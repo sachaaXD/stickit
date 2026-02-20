@@ -1,20 +1,69 @@
 <?php
 header('Content-Type: application/json');
 require '../../config/db.php';
-require_once __DIR__ . '/../_guard.php';
-require_admin($conn);
+require '../guard.php';
 
+$user = require_admin($conn);
 
-$id = $_GET['id'] ?? 0;
-if (!$id) {
-    echo json_encode(['status'=>'error','message'=>'id required']);
+// Validasi ID
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if ($id <= 0) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid id'
+    ]);
     exit;
 }
 
-$stmt = $conn->prepare("DELETE FROM stickers WHERE id=?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
+// Cek apakah sticker ada
+$check = $conn->prepare("
+    SELECT id 
+    FROM stickers 
+    WHERE id = ?
+");
 
-echo json_encode(['status'=>'success','message'=>'Sticker deleted']);
+$check->bind_param("i", $id);
+$check->execute();
+$check->store_result();
+
+if ($check->num_rows === 0) {
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Sticker not found'
+    ]);
+
+    $check->close();
+    $conn->close();
+    exit;
+}
+
+$check->close();
+
+
+// Hapus data
+$stmt = $conn->prepare("
+    DELETE FROM stickers 
+    WHERE id = ?
+");
+
+$stmt->bind_param("i", $id);
+
+if ($stmt->execute()) {
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Sticker deleted'
+    ]);
+
+} else {
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Failed to delete sticker'
+    ]);
+}
+
 $stmt->close();
 $conn->close();

@@ -5,43 +5,73 @@ require 'config/db.php';
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!is_array($data)) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid request'
+    ]);
     exit;
 }
 
-$name = isset($data['name']) ? trim($data['name']) : '';
-$raw_password = isset($data['password']) ? $data['password'] : '';
+$name = trim($data['name'] ?? '');
+$raw_password = $data['password'] ?? '';
 
 if ($name === '' || $raw_password === '') {
-    echo json_encode(['status' => 'error', 'message' => 'Name and password required']);
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Name and password required'
+    ]);
     exit;
 }
 
-$stmt = $conn->prepare("SELECT id, password, role FROM users WHERE name = ?");
+$stmt = $conn->prepare("
+    SELECT id, password, role
+    FROM users
+    WHERE name = ?
+    LIMIT 1
+");
+
 $stmt->bind_param("s", $name);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows === 0) {
+$user = $result->fetch_assoc();
+
+if (!$user || !password_verify($raw_password, $user['password'])) {
+
+    http_response_code(401);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid credentials'
+    ]);
+
     $stmt->close();
     $conn->close();
-    echo json_encode(['status' => 'error', 'message' => 'User not found']);
     exit;
 }
 
-$user = $result->fetch_assoc();
-
-// verif password
-if (password_verify($raw_password, $user['password'])) {
-    echo json_encode([
-        'status' => 'success',
-        'message' => 'Login successful',
-        'user_id' => (int)$user['id'],
-        'role' => $user['role']
-    ]);
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Wrong password']);
-}
-
 $stmt->close();
+
+// generate secure token
+$token = bin2hex(random_bytes(32));
+
+$update = $conn->prepare("
+    UPDATE users
+    SET token = ?
+    WHERE id = ?
+");
+
+$update->bind_param("si", $token, $user['id']);
+$update->execute();
+$update->close();
+
+echo json_encode([
+    'status' => 'success',
+    'message' => 'Login successful',
+    'user_id' => (int)$user['id'],
+    'role' => $user['role'],
+    'token' => $token
+]);
+
 $conn->close();

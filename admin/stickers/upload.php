@@ -1,94 +1,116 @@
 <?php
+
 header("Content-Type: application/json");
+require '../../config/db.php';
+require '../guard.php';
 
-require_once "../../config/db.php";
+$user = require_admin($conn);
 
-// folder tujuan upload
 $target_dir = "../../uploads/stickers/";
 
-// cek apakah folder ada
 if (!is_dir($target_dir)) {
     mkdir($target_dir, 0777, true);
 }
 
-// cek file dikirim atau tidak
+
 if (!isset($_FILES["image"])) {
+
     echo json_encode([
-        "success" => false,
-        "message" => "Tidak ada file dikirim"
+        "status" => "error",
+        "message" => "File required"
     ]);
+
     exit;
 }
 
-$name = $_POST["name"] ?? "";
-$category = $_POST["category"] ?? "general";
-$uploaded_by = $_POST["uploaded_by"] ?? "admin";
+
+$name = trim($_POST["name"] ?? '');
+$category = trim($_POST["category"] ?? 'general');
+$uploaded_by = trim($_POST["uploaded_by"] ?? 'admin');
+
+if ($name === '') {
+
+    echo json_encode([
+        "status" => "error",
+        "message" => "Name required"
+    ]);
+
+    exit;
+}
+
 
 $file = $_FILES["image"];
 
-$max_size = 2 * 1024 * 1024; // 2MB
+$max_size = 2 * 1024 * 1024;
 
-// validasi size
 if ($file["size"] > $max_size) {
+
     echo json_encode([
-        "success" => false,
-        "message" => "Ukuran file terlalu besar (max 2MB)"
+        "status" => "error",
+        "message" => "Max size 2MB"
     ]);
+
     exit;
 }
 
-// validasi tipe
-$allowed_types = ["image/png", "image/jpeg", "image/jpg"];
 
-if (!in_array($file["type"], $allowed_types)) {
+$allowed = ["image/png", "image/jpeg", "image/jpg"];
+
+if (!in_array($file["type"], $allowed)) {
+
     echo json_encode([
-        "success" => false,
-        "message" => "Format harus PNG atau JPG"
+        "status" => "error",
+        "message" => "Only PNG/JPG allowed"
     ]);
+
     exit;
 }
 
-// buat nama file unik
+
 $filename = time() . "_" . basename($file["name"]);
 
 $target_file = $target_dir . $filename;
 
-// upload file
-if (move_uploaded_file($file["tmp_name"], $target_file)) {
 
-    // path untuk database
-    $image_url = "uploads/stickers/" . $filename;
+if (!move_uploaded_file($file["tmp_name"], $target_file)) {
 
-    // simpan ke database
-    $stmt = $conn->prepare("
+    echo json_encode([
+        "status" => "error",
+        "message" => "Upload failed"
+    ]);
+
+    exit;
+}
+
+
+$image_url = "uploads/stickers/" . $filename;
+
+
+$stmt = $conn->prepare("
     INSERT INTO upload
     (name, image_url, category, uploaded_by)
     VALUES (?, ?, ?, ?)
 ");
 
+$stmt->bind_param("ssss", $name, $image_url, $category, $uploaded_by);
 
-    $stmt->bind_param("ssss", $name, $image_url, $category, $uploaded_by);
 
-    if ($stmt->execute()) {
+if ($stmt->execute()) {
 
-        echo json_encode([
-            "success" => true,
-            "message" => "Upload berhasil",
-            "image_url" => $image_url
-        ]);
-
-    } else {
-
-        echo json_encode([
-            "success" => false,
-            "message" => "Gagal simpan ke database"
-        ]);
-    }
+    echo json_encode([
+        "status" => "success",
+        "message" => "Upload success",
+        "image_url" => $image_url
+    ]);
 
 } else {
 
     echo json_encode([
-        "success" => false,
-        "message" => "Upload file gagal"
+        "status" => "error",
+        "message" => "DB insert failed"
     ]);
 }
+
+
+$stmt->close();
+$conn->close();

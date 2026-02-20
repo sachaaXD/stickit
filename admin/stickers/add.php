@@ -1,30 +1,71 @@
 <?php
+
 header('Content-Type: application/json');
 require '../../config/db.php';
-require_once __DIR__ . '/../_guard.php';
-require_admin($conn);
+require '../guard.php';
 
+$user = require_admin($conn);
 
-$data = json_decode(file_get_contents("php://input"), true);
+$id = intval($_GET['id'] ?? 0);
 
-$name = $data['name'] ?? '';
-$price = $data['price'] ?? 0;
-$category_id = $data['category_id'] ?? 0;
-$image = $data['image'] ?? '';
+if ($id <= 0) {
 
-if (!$name || !$price || !$category_id || !$image) {
-    echo json_encode(['status'=>'error','message'=>'Incomplete data']);
+    echo json_encode([
+        'status'=>'error',
+        'message'=>'id required'
+    ]);
+
     exit;
 }
 
-$stmt = $conn->prepare("
-    INSERT INTO stickers (name, price, category_id, image)
-    VALUES (?, ?, ?, ?)
-");
-$stmt->bind_param("siis", $name, $price, $category_id, $image);
 
-$stmt->execute();
-echo json_encode(['status'=>'success','message'=>'Sticker added']);
+/*
+|--------------------------------------------------------------------------
+| Check exist
+|--------------------------------------------------------------------------
+*/
+
+$check = $conn->prepare("SELECT id FROM stickers WHERE id=? LIMIT 1");
+$check->bind_param("i", $id);
+$check->execute();
+$res = $check->get_result();
+
+if ($res->num_rows === 0) {
+
+    echo json_encode([
+        'status'=>'error',
+        'message'=>'Sticker not found'
+    ]);
+
+    exit;
+}
+
+$check->close();
+
+
+/*
+|--------------------------------------------------------------------------
+| Delete
+|--------------------------------------------------------------------------
+*/
+
+$stmt = $conn->prepare("DELETE FROM stickers WHERE id=?");
+$stmt->bind_param("i", $id);
+
+if ($stmt->execute()) {
+
+    echo json_encode([
+        'status'=>'success',
+        'message'=>'Sticker deleted'
+    ]);
+
+} else {
+
+    echo json_encode([
+        'status'=>'error',
+        'message'=>'Delete failed'
+    ]);
+}
 
 $stmt->close();
 $conn->close();

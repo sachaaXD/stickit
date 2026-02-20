@@ -1,25 +1,20 @@
 <?php
-// Pastikan file endpoint admin sudah require db.php sebelum memanggil fungsi inii
 
-function require_admin($conn) {
-    $user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+require_once __DIR__ . '/../config/auth.php';
 
-    if ($user_id <= 0) {
-        echo json_encode(['status' => 'error', 'message' => 'user_id required (admin)']);
+function require_admin($conn)
+{
+    $user = get_user_from_token($conn);
+
+    if ($user['role'] !== 'admin') {
+
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Unauthorized (admin only)'
+        ]);
+
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    $user = $res->fetch_assoc();
-    $stmt->close();
-
-    if (!$user || $user['role'] !== 'admin') {
-        echo json_encode(['status' => 'error', 'message' => 'Unauthorized (admin only)']);
-        exit;
-    }
-
-    return $user_id;
+    return $user;
 }

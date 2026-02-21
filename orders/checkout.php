@@ -2,55 +2,98 @@
 header('Content-Type: application/json');
 
 require '../config/db.php';
-require '../admin/guard.php'; // ← WAJIB
+require '../admin/guard.php'; 
 
-$user_id = (int)$user['id']; // ← dari token, bukan input
+$user_id = (int)$user['id'];
 
-// ambil isi cart user
+
+$stmtEmail = $conn->prepare("
+    SELECT email FROM users WHERE id = ?
+");
+$stmtEmail->bind_param("i", $user_id);
+$stmtEmail->execute();
+
+$resEmail = $stmtEmail->get_result();
+
+if ($resEmail->num_rows === 0) {
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'User not found'
+    ]);
+
+    $stmtEmail->close();
+    $conn->close();
+    exit;
+}
+
+$userData = $resEmail->fetch_assoc();
+$email = $userData['email'];
+
+$stmtEmail->close();
+
+
 $stmt = $conn->prepare("
     SELECT s.id AS sticker_id, s.price
     FROM cart c
     JOIN stickers s ON c.sticker_id = s.id
     WHERE c.user_id = ?
 ");
+
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
+
 $result = $stmt->get_result();
 
 $items = [];
 $total = 0;
 
 while ($row = $result->fetch_assoc()) {
+
     $items[] = $row;
     $total += (int)$row['price'];
+
 }
+
 $stmt->close();
 
+
 if (count($items) === 0) {
-    $conn->close();
+
     echo json_encode([
         'status' => 'error',
         'message' => 'Cart is empty'
     ]);
+
+    $conn->close();
     exit;
+
 }
+
 
 $conn->begin_transaction();
 
 try {
 
-    // buat order
     $stmtOrder = $conn->prepare("
-        INSERT INTO orders (user_id, total, status)
-        VALUES (?, ?, 'pending')
+        INSERT INTO orders (user_id, email, total, status)
+        VALUES (?, ?, ?, 'pending')
     ");
-    $stmtOrder->bind_param("ii", $user_id, $total);
+
+    $stmtOrder->bind_param(
+        "isi",
+        $user_id,
+        $email,
+        $total
+    );
+
     $stmtOrder->execute();
 
     $order_id = $conn->insert_id;
+
     $stmtOrder->close();
 
-    // order items
+
     $stmtItem = $conn->prepare("
         INSERT INTO order_items (order_id, sticker_id, price, qty)
         VALUES (?, ?, ?, 1)
@@ -69,34 +112,44 @@ try {
         );
 
         $stmtItem->execute();
+
     }
 
     $stmtItem->close();
 
-    // kosongkan cart
+
     $stmtClear = $conn->prepare("
         DELETE FROM cart WHERE user_id = ?
     ");
+
     $stmtClear->bind_param("i", $user_id);
     $stmtClear->execute();
+
     $stmtClear->close();
 
     $conn->commit();
 
+
     echo json_encode([
         'status' => 'success',
         'order_id' => (int)$order_id,
-        'total' => (int)$total
+        'total' => (int)$total,
+        'email' => $email,
+        'message' => 'Order created successfully'
     ]);
 
-} catch (Exception $e) {
+}
+catch (Exception $e) {
 
     $conn->rollback();
 
     echo json_encode([
         'status' => 'error',
-        'message' => 'Checkout failed'
+        'message' => 'Checkout failed',
+        'error' => $e->getMessage()
     ]);
+
 }
 
 $conn->close();
+?>

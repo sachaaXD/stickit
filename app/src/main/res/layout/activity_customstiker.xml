@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF6E6"
+    android:padding="12dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="#A6D1FF"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_cicle_white"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#193150" />
+
+            <TextView
+                android:id="@+id/tvHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:text="Custom Sticker"
+                android:textColor="#193150"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/btnBack"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/canvasUpload"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                app:layout_constraintTop_toBottomOf="@id/btnBack">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/whatsapp_image_2026_02_19_at_22_35_14_1_">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_search_bar"
+                        android:paddingHorizontal="16dp"
+                        android:text="+ Add image to begin"
+                        android:textAllCaps="false"
+                        android:textColor="#193150"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvTitleType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Choose Your Type of Sticker"
+                android:textColor="#193150"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/canvasUpload" />
+
+            <RadioGroup
+                android:id="@+id/rgStickerType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/tvTitleType">
+
+                <RadioButton
+                    android:id="@+id/rbVinyl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:buttonTint="#193150"
+                    android:paddingVertical="0dp"
+                    android:text="Vinyl (tahan air dan cuaca)"
+                    android:textColor="#193150"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/rbPaper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:buttonTint="#193150"
+                    android:paddingVertical="0dp"
+                    android:text="Paper"
+                    android:textColor="#193150"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/rbGlow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:buttonTint="#193150"
+                    android:paddingVertical="0dp"
+                    android:text="Glow in the dark"
+                    android:textColor="#193150"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/rbChromo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:buttonTint="#193150"
+                    android:paddingVertical="0dp"
+                    android:text="Chromo (kertas mengkilap)"
+                    android:textColor="#193150"
+                    android:textSize="12sp" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/panelQty"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_white_panel"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintTop_toBottomOf="@id/rgStickerType">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Specify Many Stickers"
+                    android:textColor="#193150"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_input_add"
+                    app:tint="#193150" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:text="1"
+                    android:textColor="#193150"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_input_delete"
+                    app:tint="#193150" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/panelPrice"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/bg_white_panel"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-black"
+                    android:text="Rp. 12.000"
+                    android:textColor="#193150"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:text="12k/Sticker"
+                    android:textColor="#193150"
+                    android:textSize="11sp" />
+
+                <ImageButton
+                    android:id="@+id/btnCheckout"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_cicle_white"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@android:drawable/ic_media_play"
+                    app:tint="#193150" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

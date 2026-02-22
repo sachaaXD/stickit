@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFCDE5FF"/> <!-- warna background kotak -->
+    <corners android:radius="16dp"/> <!-- lengkung sudut kecil -->
+</shape>

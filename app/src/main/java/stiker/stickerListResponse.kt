@@ -1,0 +1,4 @@
+package stiker
+
+class stickerListResponse {
+}

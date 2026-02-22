@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF6E6">
+
+    <!-- 1. BACK BUTTON -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="56dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/card_blue"
+        android:src="@android:drawable/ic_menu_revert"
+        android:contentDescription="Back Button"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#193150" />
+
+    <!-- 2. SEARCH BAR -->
+    <LinearLayout
+        android:id="@+id/searchContainer"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_search_bar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnBack">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="#8A8A8A" />
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="Select 1 category"
+            android:inputType="text"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- 3. GRID KATEGORI (3x3) -->
+    <GridLayout
+        android:id="@+id/gridCategories"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
+        android:columnCount="3"
+        android:rowCount="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchContainer">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat1"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="🐱 Cute"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat2"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="🐼 Animal"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat3"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="🚀 Astro"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat4"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="🎭 Meme"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat5"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="👻 Spooky"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat6"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="🤖 Chara"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat7"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="🎵 Music"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat8"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="🎬 Movie"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCat9"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/card_blue"
+            android:text="💬 Quotes"
+            android:textAllCaps="false"
+            android:textColor="#193150"
+            android:textSize="12sp" />
+    </GridLayout>
+
+    <!-- 4. STICKER LIST (RecyclerView replaces "Nothing to show...") -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvStickers"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:background="@drawable/bg_gradient_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gridCategories" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
